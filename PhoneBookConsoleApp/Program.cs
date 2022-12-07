@@ -1,13 +1,15 @@
-﻿namespace PhoneBookConsoleApp
+﻿using System.Text;
+
+namespace PhoneBookConsoleApp
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            string DbPath = Directory.GetCurrentDirectory() + "\\Phonebook.csv";
+            string dbPath = Directory.GetCurrentDirectory() + "\\Phonebook.csv";
             string cmd = "";
-            string[] CmdInput = { "/help", "/exit", "/list", "/search", "/add", "/delete", "/edit" };
-            List<string> Commands = new List<string>(CmdInput);
+            string[] cmdInput = { "/help", "/exit", "/list", "/search", "/add", "/delete", "/edit" };
+            List<string> Commands = new List<string>(cmdInput);
             
             do
             {
@@ -26,7 +28,7 @@
                             break;
 
                         case "/list":
-                            ListPhoneBook(DbPath);
+                            ListPhoneBook(dbPath);
                             break;
                     }
                 }
@@ -45,35 +47,48 @@
             {
                 Console.Clear();
                 Console.WriteLine("Pnone Book App v0.0.1 - PhoneBook Listing");
-                Console.WriteLine();                                
+                Console.WriteLine();
 
-                string[] lines= File.ReadAllLines(Path);
-                
-                //Check how many rows and columns in the CSV file
-                int rows_num = lines.Length;
-                int cols_num = lines[0].Split(',').Length;
+                string[,] csv_values = LoadCSV(Path);
 
-                //Allocate the array to load the CSV file
-                string[,] csv_values = new string[rows_num, cols_num];
-
-                //Load the array
-                for (int r = 0; r < rows_num; r++)
-                {
-                    string[] line_r = lines[r].Split(',');
-
-                    for (int c = 0; c < cols_num; c++)
-                    {
-                        csv_values[r, c] = line_r[c];
-                    }
-
-                }
-
-                for (int r = 0; r < csv_values.GetLength(0); r++)
+                for (int r = 0; r < 1; r++)
                 {
                     for (int c = 0; c < csv_values.GetLength(1); c++)
                     {
+                        switch (c)
+                        {
+                            //TODO: try to get rid off fixed column number
+                            case 3:
+                                Console.Write("{0, -25}{1, 0}", csv_values[r, c], "|");
+                                break;
+                            default:
+                                Console.Write("{0, -15}{1, 0}", csv_values[r, c], "|");
+                                break;
+                        }
+                    }
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < 74; i++)
+                    {
+                        sb.Append("_");
+                    }
+                    Console.WriteLine("\n" + sb);
+                }
+
+                for (int r = 1; r < csv_values.GetLength(0); r++)
+                {
+                    for (int c = 0; c < csv_values.GetLength(1); c++)
+                    {
+                        switch (c)
+                        {
+                            case 3:
+                                Console.Write("{0, -25}{1, 0}", csv_values[r, c], "|");
+                                break;
+                            default:
+                                Console.Write("{0, -15}{1, 0}", csv_values[r, c], "|");
+                                break;
+                        }
                         // TODO: fix string formating - pipes and alignment
-                        Console.Write("{0, -15} {1, 5}", csv_values[r, c], "|");
+                        //Console.Write("{0, -20} {1, 0}", csv_values[r, c], "|");
                     }
                     Console.WriteLine();
                 }
@@ -84,12 +99,42 @@
             }
         }
 
+        private static string[,] LoadCSV(string Path)
+        {
+            string[] lines = File.ReadAllLines(Path);
+
+            //Check how many rows and columns in the CSV file
+            int rows_num = lines.Length;
+            int cols_num = lines[0].Split(',').Length;
+
+            //Allocate the array to load the CSV file
+            string[,] csv_values = new string[rows_num, cols_num];
+
+            //Load the array
+            for (int r = 0; r < rows_num; r++)
+            {
+                string[] line_r = lines[r].Split(',');
+
+                for (int c = 0; c < cols_num; c++)
+                {
+                    csv_values[r, c] = line_r[c];
+                }
+
+            }
+
+            return csv_values;
+        }
+
         private static void Help()
         {
             Console.Clear();
             Console.WriteLine("Pnone Book App v0.0.1 - Help");
             Console.WriteLine();
-            Console.WriteLine("Here will be a help text...");
+            Console.WriteLine("List of the availabel commands:\n" +
+                "/help - loads this screen\n" +
+                "/exit - exit PhoneBook application\n" +
+                "/list - list all entries from the Phone Book\n" +
+                "To be continue...");
             Console.WriteLine();
             Console.WriteLine("Pres any key to return to the main menu.");
             Console.ReadKey();
