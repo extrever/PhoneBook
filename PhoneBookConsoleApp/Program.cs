@@ -30,6 +30,7 @@ namespace PhoneBookConsoleApp
                         case "/list":
                             ListPhoneBook(dbPath);
                             break;
+
                         case "/search":
                             SearchRecord(dbPath);
                             break;
@@ -47,36 +48,89 @@ namespace PhoneBookConsoleApp
         private static void SearchRecord(string Path)
         {
             if(File.Exists(Path))
-            {
-                //TODO: Finish 'search' method
+            {                
                 Console.Clear();
                 Console.WriteLine("Pnone Book App v0.0.1 - Search for a Record");
                 Console.WriteLine();
 
                 Console.WriteLine("Choose how to search:\n" +
                     "1 - by First Name\n" +
-                    "2 - by Second Name");
-                int searchSelect = Int16.Parse(Console.ReadLine());
+                    "2 - by Last Name");
+                                
+                int searchSelection;
+                bool success = int.TryParse(Console.ReadLine(), out searchSelection);
 
                 string[,] csv_values = LoadCSV(Path);
 
-                switch (searchSelect)
+                if (success)
                 {
-                    case 1:
-                        Console.WriteLine("Searching by First Name....");
-                        break;
-                    case 2:
-                        Console.WriteLine("Searching by Second Name....");
-                        break;
-                    default:
-                        Console.WriteLine("Incorrect selection.");
-                        break;
+                    switch (searchSelection)
+                    {
+                        case 1:
+                            Console.WriteLine("\nEnter First Name:");
+                            string firstName = Console.ReadLine();
+                            SearchResult(csv_values, firstName, searchSelection);
+                            break;
+                        case 2:
+                            Console.WriteLine("\nEnter Last Name:");
+                            string lastName = Console.ReadLine();
+                            SearchResult(csv_values, lastName, searchSelection);
+                            break;
+                        default:
+                            Console.WriteLine("Incorrect selection.");
+                            break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect selection.");
                 }
 
                 Console.WriteLine();
                 Console.WriteLine("Pres any key to return to the main menu.");
                 Console.ReadKey();
             }
+        }
+
+        private static void SearchResult(string[,] csv_values, string name, int searchBy)
+        {
+            //SearchBy: 1 - First Name, 2 - Last Name
+
+            StringBuilder searchResultSB = new StringBuilder();
+
+            switch (searchBy)
+            {
+                case 1:
+                    for (int r = 1; r < csv_values.GetLength(0); r++)
+                    {
+                        if (csv_values[r, 0] == name)
+                        {
+                            searchResultSB.Append("Found:" + " " + csv_values[r, 0] + " " + csv_values[r, 1] + " " +  csv_values[r, 2] + " " + csv_values[r, 3] + "\n");
+                        }
+                    }
+                    if (searchResultSB.Length > 0)
+                    {
+                        Console.WriteLine("\n" + searchResultSB);
+                    }
+                    else
+                        Console.WriteLine("\nNothing found.");
+                    break;
+                case 2:
+                    for (int r = 1; r < csv_values.GetLength(0); r++)
+                    {
+                        if (csv_values[r, 1] == name)
+                        {
+                            searchResultSB.Append("Found:" + " " + csv_values[r, 0] + " " + csv_values[r, 1] + " " + csv_values[r, 2] + " " + csv_values[r, 3] + "\n");
+                        }
+                    }
+                    if (searchResultSB.Length > 0)
+                    {
+                        Console.WriteLine("\n" + searchResultSB);
+                    }
+                    else
+                        Console.WriteLine("\nNothing found.");
+                    break;
+            }            
         }
 
         private static void ListPhoneBook(string Path)
@@ -89,6 +143,7 @@ namespace PhoneBookConsoleApp
 
                 string[,] csv_values = LoadCSV(Path);
 
+                //Display header
                 for (int r = 0; r < 1; r++)
                 {
                     for (int c = 0; c < csv_values.GetLength(1); c++)
@@ -112,6 +167,7 @@ namespace PhoneBookConsoleApp
                     Console.WriteLine("\n" + sb);                    
                 }
 
+                //Display rows
                 for (int r = 1; r < csv_values.GetLength(0); r++)
                 {
                     for (int c = 0; c < csv_values.GetLength(1); c++)
@@ -170,6 +226,7 @@ namespace PhoneBookConsoleApp
                 "/help - loads this screen\n" +
                 "/exit - exit PhoneBook application\n" +
                 "/list - list all entries from the Phone Book\n" +
+                "/search - search for a record in the Phone Book by First or Last name\n" +
                 "To be continue...");
             Console.WriteLine();
             Console.WriteLine("Pres any key to return to the main menu.");
