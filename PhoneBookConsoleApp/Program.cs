@@ -30,6 +30,9 @@ namespace PhoneBookConsoleApp
                         case "/list":
                             ListPhoneBook(dbPath);
                             break;
+                        case "/search":
+                            SearchRecord(dbPath);
+                            break;
                     }
                 }
                 else
@@ -39,6 +42,41 @@ namespace PhoneBookConsoleApp
                 }
 
             } while (cmd != "/exit");
+        }
+
+        private static void SearchRecord(string Path)
+        {
+            if(File.Exists(Path))
+            {
+                //TODO: Finish 'search' method
+                Console.Clear();
+                Console.WriteLine("Pnone Book App v0.0.1 - Search for a Record");
+                Console.WriteLine();
+
+                Console.WriteLine("Choose how to search:\n" +
+                    "1 - by First Name\n" +
+                    "2 - by Second Name");
+                int searchSelect = Int16.Parse(Console.ReadLine());
+
+                string[,] csv_values = LoadCSV(Path);
+
+                switch (searchSelect)
+                {
+                    case 1:
+                        Console.WriteLine("Searching by First Name....");
+                        break;
+                    case 2:
+                        Console.WriteLine("Searching by Second Name....");
+                        break;
+                    default:
+                        Console.WriteLine("Incorrect selection.");
+                        break;
+                }
+
+                Console.WriteLine();
+                Console.WriteLine("Pres any key to return to the main menu.");
+                Console.ReadKey();
+            }
         }
 
         private static void ListPhoneBook(string Path)
@@ -71,7 +109,7 @@ namespace PhoneBookConsoleApp
                     {
                         sb.Append("_");
                     }
-                    Console.WriteLine("\n" + sb);
+                    Console.WriteLine("\n" + sb);                    
                 }
 
                 for (int r = 1; r < csv_values.GetLength(0); r++)
@@ -86,9 +124,7 @@ namespace PhoneBookConsoleApp
                             default:
                                 Console.Write("{0, -15}{1, 0}", csv_values[r, c], "|");
                                 break;
-                        }
-                        // TODO: fix string formating - pipes and alignment
-                        //Console.Write("{0, -20} {1, 0}", csv_values[r, c], "|");
+                        }                        
                     }
                     Console.WriteLine();
                 }
@@ -130,7 +166,7 @@ namespace PhoneBookConsoleApp
             Console.Clear();
             Console.WriteLine("Pnone Book App v0.0.1 - Help");
             Console.WriteLine();
-            Console.WriteLine("List of the availabel commands:\n" +
+            Console.WriteLine("List of the availabel commands:\n\n" +
                 "/help - loads this screen\n" +
                 "/exit - exit PhoneBook application\n" +
                 "/list - list all entries from the Phone Book\n" +

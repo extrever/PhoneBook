@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <None Update="PhoneBook.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
