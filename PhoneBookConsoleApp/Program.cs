@@ -34,6 +34,9 @@ namespace PhoneBookConsoleApp
                         case "/search":
                             SearchRecord(dbPath);
                             break;
+                        case "/add":
+                            AddRecord();
+                            break;
                     }
                 }
                 else
@@ -45,8 +48,22 @@ namespace PhoneBookConsoleApp
             } while (cmd != "/exit");
         }
 
+        private static void AddRecord()
+        {
+            Console.Clear();
+            Console.WriteLine("Pnone Book App v0.0.1 - Adding a record to the Phone Book");
+            Console.WriteLine();
+
+            Console.WriteLine("Adding a new record...");
+
+            Console.WriteLine();
+            Console.WriteLine("Pres any key to return to the main menu.");
+            Console.ReadKey();
+        }
+
         private static void SearchRecord(string Path)
         {
+            //TODO: change to 'try/catch'
             if(File.Exists(Path))
             {                
                 Console.Clear();
@@ -134,7 +151,8 @@ namespace PhoneBookConsoleApp
         }
 
         private static void ListPhoneBook(string Path)
-        {           
+        {
+            //TODO: change to 'try/catch'
             if (File.Exists(Path))
             {
                 Console.Clear();
@@ -193,6 +211,7 @@ namespace PhoneBookConsoleApp
 
         private static string[,] LoadCSV(string Path)
         {
+            //TODO: add 'try/catch'
             string[] lines = File.ReadAllLines(Path);
 
             //Check how many rows and columns in the CSV file
@@ -227,6 +246,7 @@ namespace PhoneBookConsoleApp
                 "/exit - exit PhoneBook application\n" +
                 "/list - list all entries from the Phone Book\n" +
                 "/search - search for a record in the Phone Book by First or Last name\n" +
+                "/add - add new record to the Phone Book\n" +
                 "To be continue...");
             Console.WriteLine();
             Console.WriteLine("Pres any key to return to the main menu.");
