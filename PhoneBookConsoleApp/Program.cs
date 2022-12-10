@@ -4,6 +4,12 @@ namespace PhoneBookConsoleApp
 {
     internal class Program
     {
+        public enum HeadFootType
+        {
+            header,
+            footer
+        }
+        
         static void Main(string[] args)
         {
             string dbPath = Directory.GetCurrentDirectory() + "\\Phonebook.csv";
@@ -50,25 +56,22 @@ namespace PhoneBookConsoleApp
 
         private static void AddRecord()
         {
-            Console.Clear();
-            Console.WriteLine("Pnone Book App v0.0.1 - Adding a record to the Phone Book");
-            Console.WriteLine();
+            HeaderFooterMsg(HeadFootType.header, "Adding a record to the Phone Book");            
 
+            Console.WriteLine("Enter new record in the correct format and press enter.");
+            Console.WriteLine("Format - [FirstName],[LastName],[Phone],[Email]");
+            Console.WriteLine("If some data is unavailable enter n//a.");
             Console.WriteLine("Adding a new record...");
 
-            Console.WriteLine();
-            Console.WriteLine("Pres any key to return to the main menu.");
-            Console.ReadKey();
+            HeaderFooterMsg(HeadFootType.footer);            
         }
 
         private static void SearchRecord(string Path)
         {
             //TODO: change to 'try/catch'
             if(File.Exists(Path))
-            {                
-                Console.Clear();
-                Console.WriteLine("Pnone Book App v0.0.1 - Search for a Record");
-                Console.WriteLine();
+            {
+                HeaderFooterMsg(HeadFootType.header, "Search for a Record");                
 
                 Console.WriteLine("Choose how to search:\n" +
                     "1 - by First Name\n" +
@@ -102,10 +105,8 @@ namespace PhoneBookConsoleApp
                 {
                     Console.WriteLine("Incorrect selection.");
                 }
-
-                Console.WriteLine();
-                Console.WriteLine("Pres any key to return to the main menu.");
-                Console.ReadKey();
+                                
+                HeaderFooterMsg(HeadFootType.footer);
             }
         }
 
@@ -155,9 +156,7 @@ namespace PhoneBookConsoleApp
             //TODO: change to 'try/catch'
             if (File.Exists(Path))
             {
-                Console.Clear();
-                Console.WriteLine("Pnone Book App v0.0.1 - PhoneBook Listing");
-                Console.WriteLine();
+                HeaderFooterMsg(HeadFootType.header, "PhoneBook Listing");                
 
                 string[,] csv_values = LoadCSV(Path);
 
@@ -202,10 +201,7 @@ namespace PhoneBookConsoleApp
                     }
                     Console.WriteLine();
                 }
-
-                Console.WriteLine();
-                Console.WriteLine("Pres any key to return to the main menu.");
-                Console.ReadKey();
+                HeaderFooterMsg(HeadFootType.footer);                
             }
         }
 
@@ -237,20 +233,16 @@ namespace PhoneBookConsoleApp
         }
 
         private static void Help()
-        {
-            Console.Clear();
-            Console.WriteLine("Pnone Book App v0.0.1 - Help");
-            Console.WriteLine();
-            Console.WriteLine("List of the availabel commands:\n\n" +
+        {            
+            HeaderFooterMsg(HeadFootType.header, "Help");
+            Console.WriteLine("List of the available commands:\n\n" +
                 "/help - loads this screen\n" +
                 "/exit - exit PhoneBook application\n" +
                 "/list - list all entries from the Phone Book\n" +
                 "/search - search for a record in the Phone Book by First or Last name\n" +
                 "/add - add new record to the Phone Book\n" +
-                "To be continue...");
-            Console.WriteLine();
-            Console.WriteLine("Pres any key to return to the main menu.");
-            Console.ReadKey();
+                "To be continue...");            
+            HeaderFooterMsg(HeadFootType.footer);            
         }
 
         private static void BasicGreeting()
@@ -259,6 +251,27 @@ namespace PhoneBookConsoleApp
             Console.WriteLine("Pnone Book App v0.0.1");
             Console.WriteLine();
             Console.WriteLine($"Please enter your command or type /help for help.");
+        }
+
+        private static void HeaderFooterMsg(HeadFootType type, string addText="")
+        {
+            switch (type)
+            {
+                case HeadFootType.header:
+                    Console.Clear();
+                    Console.WriteLine("Pnone Book App v0.0.1 - " + addText);
+                    Console.WriteLine();
+                    break;
+                case HeadFootType.footer:
+                    Console.WriteLine();
+                    Console.WriteLine("Pres any key to return to the main menu.");
+                    Console.ReadKey();
+                    break;
+                default:
+                    break;
+
+                //Use Enum for argument type. Define argument type as created Enum type.
+            }
         }
     }
 }
