@@ -41,7 +41,7 @@ namespace PhoneBookConsoleApp
                             SearchRecord(dbPath);
                             break;
                         case "/add":
-                            AddRecord();
+                            AddRecord(dbPath);
                             break;
                     }
                 }
@@ -54,15 +54,30 @@ namespace PhoneBookConsoleApp
             } while (cmd != "/exit");
         }
 
-        private static void AddRecord()
+        private static void AddRecord(string Path)
         {
             HeaderFooterMsg(HeadFootType.header, "Adding a record to the Phone Book");            
 
             Console.WriteLine("Enter new record in the correct format and press enter.");
             Console.WriteLine("Format - [FirstName],[LastName],[Phone],[Email]");
             Console.WriteLine("If some data is unavailable enter n//a.");
-            Console.WriteLine("Adding a new record...");
+            string newRecord = Console.ReadLine();
 
+            //TODO: change to 'try/catch'
+            if (File.Exists(Path))
+            {
+                //TODO:Add more comprehensive handling for incorrect data entry
+                if (newRecord != "")
+                {
+                    File.AppendAllText(Path, "\n" + newRecord);
+                    Console.WriteLine("New record added.");
+                }
+                else 
+                {
+                    Console.WriteLine("You entered empty string, try again.");
+                }
+            }
+            
             HeaderFooterMsg(HeadFootType.footer);            
         }
 
