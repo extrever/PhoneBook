@@ -3,19 +3,21 @@
 namespace PhoneBookConsoleApp
 {
     internal class Program
-    {
-        public enum HeadFootType
-        {
-            header,
-            footer
-        }
-        
+    {       
         static void Main(string[] args)
         {
             string dbPath = Directory.GetCurrentDirectory() + "\\Phonebook.csv";
-            string cmd = "";
-            string[] cmdInput = { "/help", "/exit", "/list", "/search", "/add", "/delete", "/edit" };
-            List<string> Commands = new List<string>(cmdInput);
+            string cmd = "";            
+            List<string> Commands = new List<string>()
+            {
+                "/help",
+                "/exit",
+                "/list",
+                "/search",
+                "/add",
+                "/delete",
+                "/edit"
+            };
             
             do
             {
@@ -43,6 +45,9 @@ namespace PhoneBookConsoleApp
                         case "/add":
                             AddRecord(dbPath);
                             break;
+                        case "/edit":
+                            EditRecord(dbPath);
+                            break;
                     }
                 }
                 else
@@ -52,6 +57,24 @@ namespace PhoneBookConsoleApp
                 }
 
             } while (cmd != "/exit");
+        }
+
+        private static void EditRecord(string Path)
+        {
+            HeaderFooterMsg(HeadFootType.header, "Editing a record");
+            
+            try
+            {
+                string[,] csv_values = LoadCSV(Path);
+                //Testing new search method...
+                SearchResultNew(csv_values, "Jhon", 1);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Programm encoureted an error: " + ex);                
+            }
+
+            HeaderFooterMsg(HeadFootType.footer);
         }
 
         private static void AddRecord(string Path)
@@ -127,6 +150,7 @@ namespace PhoneBookConsoleApp
 
         private static void SearchResult(string[,] csv_values, string name, int searchBy)
         {
+            //TODO: maybe change method to return array/list of the found strings???
             //SearchBy: 1 - First Name, 2 - Last Name
 
             StringBuilder searchResultSB = new StringBuilder();
@@ -164,6 +188,67 @@ namespace PhoneBookConsoleApp
                         Console.WriteLine("\nNothing found.");
                     break;
             }            
+        }
+
+        private static List<string> SearchResultNew(string[,] csv_values, string name, int searchBy)
+        {            
+            //SearchBy: 1 - First Name, 2 - Last Name
+
+            var foundRecord = new List<string>();
+
+            switch (searchBy)
+            {
+                case 1:
+                    for (int r = 1; r < csv_values.GetLength(0); r++)
+                    {                        
+                        if (csv_values[r, 0] == name)
+                        {
+                            foundRecord.Add(csv_values[r, 0]);
+                            foundRecord.Add(csv_values[r, 1]);
+                            foundRecord.Add(csv_values[r, 2]);
+                            foundRecord.Add(csv_values[r, 3]);                                                                                    
+                        }                        
+                    }
+                    if (foundRecord.Count > 0)
+                    {
+                        return foundRecord;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nNothing found.");
+                        foundRecord.Add("Nothing found");
+                        return foundRecord;
+                    }
+                    //TODO: ????? ask if this is critical - 'Unreachable code detected'
+                    break;
+                case 2:
+                    for (int r = 1; r < csv_values.GetLength(0); r++)
+                    {
+                        if (csv_values[r, 1] == name)
+                        {
+                            foundRecord.Add(csv_values[r, 0]);
+                            foundRecord.Add(csv_values[r, 1]);
+                            foundRecord.Add(csv_values[r, 2]);
+                            foundRecord.Add(csv_values[r, 3]);
+                        }                        
+                    }
+                    if (foundRecord.Count > 0)
+                    {
+                        return foundRecord;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nNothing found.");
+                        foundRecord.Add("Nothing found");
+                        return foundRecord;
+                    }
+                    break;
+                default:
+                    Console.WriteLine("\nIncorrect SearchBy argument.");
+                    foundRecord.Add("Incorrect SearchBy argument.");
+                    return foundRecord;
+                    break;
+            }
         }
 
         private static void ListPhoneBook(string Path)
@@ -287,6 +372,12 @@ namespace PhoneBookConsoleApp
 
                 //Use Enum for argument type. Define argument type as created Enum type.
             }
+        }
+
+        public enum HeadFootType
+        {
+            header,
+            footer
         }
     }
 }
