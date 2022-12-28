@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Xml.Linq;
 
 namespace PhoneBookConsoleApp
 {
@@ -59,19 +60,75 @@ namespace PhoneBookConsoleApp
             } while (cmd != "/exit");
         }
 
-        private static void EditRecord(string Path)
+        public class PhoneBookRecord
         {
+            public int Id { get; set; }
+            public string? FirstName { get; set; }
+            public string? LastName { get; set; }
+            public string? PhoneNumber { get; set; }
+            public string? Email { get; set; }
+        }
+
+        private static void EditRecord(string Path)
+        {            
+            var foundRecords = new List<PhoneBookRecord>();            
+
             HeaderFooterMsg(HeadFootType.header, "Editing a record");
-            
-            try
+            Console.WriteLine("Choose how to search:\n" +
+                    "1 - by First Name\n" +
+                    "2 - by Last Name");            
+
+            bool searchTypeResult = int.TryParse(Console.ReadLine(), out int searchType);
+
+            if (searchTypeResult)
             {
-                string[,] csv_values = LoadCSV(Path);
-                //Testing new search method...
-                SearchResultNew(csv_values, "Jhon", 1);
+                switch (searchType)
+                {
+                    case 1:
+                        Console.WriteLine("\nEnter First Name: ");
+                        string firstName = Console.ReadLine();
+                        try
+                        {
+                            string[,] csv_values = LoadCSV(Path);
+                            foundRecords = SearchResultListOfObj(csv_values, firstName, searchType);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Programm encoureted an error: " + ex);
+                        }
+                        break;
+                    case 2:
+                        Console.WriteLine("\nEnter Last Name: ");
+                        string lastName = Console.ReadLine();
+                        try
+                        {
+                            string[,] csv_values = LoadCSV(Path);
+                            foundRecords = SearchResultListOfObj(csv_values, lastName, searchType);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Programm encoureted an error: " + ex);
+                        }
+                        break;
+                   default:
+                        Console.WriteLine("Wrong search type, try again...");
+                        break;
+                }
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine("Programm encoureted an error: " + ex);                
+                //TODO: Rethink...
+                Console.WriteLine("Wrong search type, try again...");
+            }
+
+            if (foundRecords.Count > 1)
+            {
+                Console.WriteLine("\nThese was found:");                
+                Console.WriteLine("\nId, FirstName, Lastname, PhoneNumber, Email"); //TODO: apply formating like in List method
+                foreach (var recordObj in foundRecords)
+                {
+                    Console.WriteLine(recordObj.Id + " " + recordObj.FirstName + " " + recordObj.LastName + " " + recordObj.PhoneNumber + " " + recordObj.Email);
+                } 
             }
 
             HeaderFooterMsg(HeadFootType.footer);
@@ -89,7 +146,7 @@ namespace PhoneBookConsoleApp
             //TODO: change to 'try/catch'
             if (File.Exists(Path))
             {
-                //TODO:Add more comprehensive handling for incorrect data entry
+                //TODO: Add more comprehensive handling for incorrect data entry
                 if (newRecord != "")
                 {
                     File.AppendAllText(Path, "\n" + newRecord);
@@ -190,70 +247,74 @@ namespace PhoneBookConsoleApp
             }            
         }
 
-        private static List<string> SearchResultNew(string[,] csv_values, string name, int searchBy)
-        {            
+        private static List<PhoneBookRecord> SearchResultListOfObj(string[,] csv_values, string name, int searchBy)
+        {
+            //Search the PhoneBook and return a list of oblects representing PhoneBook records
             //SearchBy: 1 - First Name, 2 - Last Name
 
-            var foundRecord = new List<string>();
+            List<PhoneBookRecord> foundRecords = new List<PhoneBookRecord>();
 
             switch (searchBy)
             {
                 case 1:
                     for (int r = 1; r < csv_values.GetLength(0); r++)
-                    {                        
-                        if (csv_values[r, 0] == name)
-                        {
-                            foundRecord.Add(csv_values[r, 0]);
-                            foundRecord.Add(csv_values[r, 1]);
-                            foundRecord.Add(csv_values[r, 2]);
-                            foundRecord.Add(csv_values[r, 3]);                                                                                    
-                        }                        
-                    }
-                    if (foundRecord.Count > 0)
                     {
-                        return foundRecord;
+                        if (csv_values[r,0] == name)
+                        {
+                            foundRecords.Add(new PhoneBookRecord
+                            {
+                                Id = r, 
+                                FirstName = csv_values[r, 0], 
+                                LastName = csv_values[r, 1], 
+                                PhoneNumber = csv_values[r, 2], 
+                                Email = csv_values[r, 3]
+                            });
+                        }
+                    }
+                    if (foundRecords.Count > 1)
+                    {
+                        return foundRecords;
                     }
                     else
                     {
-                        Console.WriteLine("\nNothing found.");
-                        foundRecord.Add("Nothing found");
-                        return foundRecord;
+                        Console.WriteLine("\nNothing found.");                        
                     }
-                    //TODO: ????? ask if this is critical - 'Unreachable code detected'
                     break;
                 case 2:
                     for (int r = 1; r < csv_values.GetLength(0); r++)
                     {
-                        if (csv_values[r, 1] == name)
+                        if (csv_values[r,1] == name)
                         {
-                            foundRecord.Add(csv_values[r, 0]);
-                            foundRecord.Add(csv_values[r, 1]);
-                            foundRecord.Add(csv_values[r, 2]);
-                            foundRecord.Add(csv_values[r, 3]);
-                        }                        
+                            foundRecords.Add(new PhoneBookRecord
+                            {
+                                Id = r,
+                                FirstName = csv_values[r, 0],
+                                LastName = csv_values[r, 1],
+                                PhoneNumber = csv_values[r, 2],
+                                Email = csv_values[r, 3]
+                            });
+                        }
                     }
-                    if (foundRecord.Count > 0)
+                    if (foundRecords.Count > 1)
                     {
-                        return foundRecord;
+                        return foundRecords;
                     }
                     else
                     {
                         Console.WriteLine("\nNothing found.");
-                        foundRecord.Add("Nothing found");
-                        return foundRecord;
                     }
                     break;
                 default:
-                    Console.WriteLine("\nIncorrect SearchBy argument.");
-                    foundRecord.Add("Incorrect SearchBy argument.");
-                    return foundRecord;
+                    Console.WriteLine("\nIncorrect SearchBy argument.");                    
                     break;
             }
+            return null;
         }
-
+        
         private static void ListPhoneBook(string Path)
         {
             //TODO: change to 'try/catch'
+            //TODO: change search method to the Search To List Of Obj method
             if (File.Exists(Path))
             {
                 HeaderFooterMsg(HeadFootType.header, "PhoneBook Listing");                
@@ -341,6 +402,7 @@ namespace PhoneBookConsoleApp
                 "/list - list all entries from the Phone Book\n" +
                 "/search - search for a record in the Phone Book by First or Last name\n" +
                 "/add - add new record to the Phone Book\n" +
+                "/edit - edit record in the Phone Book\n" +
                 "To be continue...");            
             HeaderFooterMsg(HeadFootType.footer);            
         }
