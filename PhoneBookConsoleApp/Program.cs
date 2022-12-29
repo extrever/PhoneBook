@@ -74,7 +74,7 @@ namespace PhoneBookConsoleApp
             var foundRecords = new List<PhoneBookRecord>();            
 
             HeaderFooterMsg(HeadFootType.header, "Editing a record");
-            Console.WriteLine("Choose how to search:\n" +
+            Console.WriteLine("Choose how to search record to edit:\n" +
                     "1 - by First Name\n" +
                     "2 - by Last Name");            
 
@@ -123,12 +123,31 @@ namespace PhoneBookConsoleApp
 
             if (foundRecords.Count > 1)
             {
-                Console.WriteLine("\nThese was found:");                
-                Console.WriteLine("\nId, FirstName, Lastname, PhoneNumber, Email"); //TODO: apply formating like in List method
+                Console.WriteLine("\nThese was found:");
+                //Console.WriteLine("\nId, FirstName, Lastname, PhoneNumber, Email");
+                //TODO: apply formating like in List method, Console.Write("{0, -25}{1, 0}", csv_values[r, c], "|");
+                Console.WriteLine("{0, -3}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}", "Id", "|", "FirstName", "|", "LastName", "|", "PhoneNumber", "|", "Email", "|");                
                 foreach (var recordObj in foundRecords)
                 {
-                    Console.WriteLine(recordObj.Id + " " + recordObj.FirstName + " " + recordObj.LastName + " " + recordObj.PhoneNumber + " " + recordObj.Email);
+                    Console.WriteLine("{0, -3}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}", recordObj.Id, "|", recordObj.FirstName, "|", recordObj.LastName, "|", recordObj.PhoneNumber, "|", recordObj.Email);
                 } 
+            }
+
+            Console.WriteLine("Enter Id of the record you want to edit: ");
+            bool recordToEditParseResult = int.TryParse(Console.ReadLine(), out int recordId);
+
+            if (recordToEditParseResult) //TODO: add validation for the Id existing in search result...
+            {
+                Console.WriteLine("Enter updated record in the correct format and press enter.");
+                Console.WriteLine("Format - [FirstName],[LastName],[Phone],[Email]");
+                Console.WriteLine("If some data is unavailable enter n//a.");
+
+                string editedRecord = Console.ReadLine();
+                //TODO: stoped here
+            }
+            else
+            {
+                Console.WriteLine("You entered wrong Id, try again."); //TODO: change to do while???
             }
 
             HeaderFooterMsg(HeadFootType.footer);
