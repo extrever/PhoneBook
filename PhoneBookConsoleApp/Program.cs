@@ -4,11 +4,11 @@ using System.Xml.Linq;
 namespace PhoneBookConsoleApp
 {
     internal class Program
-    {       
+    {
         static void Main(string[] args)
         {
             string dbPath = Directory.GetCurrentDirectory() + "\\Phonebook.csv";
-            string cmd = "";            
+            string cmd = "";
             List<string> Commands = new List<string>()
             {
                 "/help",
@@ -19,15 +19,15 @@ namespace PhoneBookConsoleApp
                 "/delete",
                 "/edit"
             };
-            
+
             do
             {
                 BasicGreeting();
-                
+
                 cmd = Console.ReadLine();
                 if (Commands.Contains(cmd))
                 {
-                    switch(cmd)
+                    switch (cmd)
                     {
                         case "/help":
                             Help();
@@ -70,13 +70,13 @@ namespace PhoneBookConsoleApp
         }
 
         private static void EditRecord(string Path)
-        {            
-            var foundRecords = new List<PhoneBookRecord>();            
+        {
+            var foundRecords = new List<PhoneBookRecord>();
 
             HeaderFooterMsg(HeadFootType.header, "Editing a record");
             Console.WriteLine("Choose how to search record to edit:\n" +
                     "1 - by First Name\n" +
-                    "2 - by Last Name");            
+                    "2 - by Last Name");
 
             bool searchTypeResult = int.TryParse(Console.ReadLine(), out int searchType);
 
@@ -110,44 +110,51 @@ namespace PhoneBookConsoleApp
                             Console.WriteLine("Programm encoureted an error: " + ex);
                         }
                         break;
-                   default:
-                        Console.WriteLine("Wrong search type, try again...");
+                    default:
+                        Console.WriteLine("Wrong search Id, try again...");
                         break;
+                }
+
+                if (foundRecords.Count >= 1)
+                {
+                    Console.WriteLine("\nThese were found:");
+                    //TODO: apply formating like in List method, Console.Write("{0, -25}{1, 0}", csv_values[r, c], "|");
+                    Console.WriteLine("{0, -3}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}", "Id", "|", "FirstName", "|", "LastName", "|", "PhoneNumber", "|", "Email", "|");
+                    foreach (var recordObj in foundRecords)
+                    {
+                        Console.WriteLine("{0, -3}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}", recordObj.Id, "|", recordObj.FirstName, "|", recordObj.LastName, "|", recordObj.PhoneNumber, "|", recordObj.Email);
+                    }
+
+                    Console.WriteLine("Enter Id of the record you want to edit: ");
+                    bool recordToEditParseResult = int.TryParse(Console.ReadLine(), out int recordId);
+
+                    if (recordToEditParseResult)
+                    {
+                        if (foundRecords.Any(x => x.Id == recordId))
+                        {
+                            Console.WriteLine("Enter updated record in the correct format and press enter.");
+                            Console.WriteLine("Format - [FirstName],[LastName],[Phone],[Email]");
+                            Console.WriteLine("If some data is unavailable enter n/a.");
+
+                            string editedRecord = Console.ReadLine();
+                            //TODO: stoped here
+                        }
+                        else
+                        {
+                            Console.WriteLine("You entered wrong Id, try again"); //TODO: change to do while??? recursion????
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("You entered not a valid Id, try again");
+                    }
                 }
             }
             else
             {
-                //TODO: Rethink...
+                //TODO: Rethink... recursion?
                 Console.WriteLine("Wrong search type, try again...");
-            }
 
-            if (foundRecords.Count > 1)
-            {
-                Console.WriteLine("\nThese was found:");
-                //Console.WriteLine("\nId, FirstName, Lastname, PhoneNumber, Email");
-                //TODO: apply formating like in List method, Console.Write("{0, -25}{1, 0}", csv_values[r, c], "|");
-                Console.WriteLine("{0, -3}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}", "Id", "|", "FirstName", "|", "LastName", "|", "PhoneNumber", "|", "Email", "|");                
-                foreach (var recordObj in foundRecords)
-                {
-                    Console.WriteLine("{0, -3}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}", recordObj.Id, "|", recordObj.FirstName, "|", recordObj.LastName, "|", recordObj.PhoneNumber, "|", recordObj.Email);
-                } 
-            }
-
-            Console.WriteLine("Enter Id of the record you want to edit: ");
-            bool recordToEditParseResult = int.TryParse(Console.ReadLine(), out int recordId);
-
-            if (recordToEditParseResult) //TODO: add validation for the Id existing in search result...
-            {
-                Console.WriteLine("Enter updated record in the correct format and press enter.");
-                Console.WriteLine("Format - [FirstName],[LastName],[Phone],[Email]");
-                Console.WriteLine("If some data is unavailable enter n//a.");
-
-                string editedRecord = Console.ReadLine();
-                //TODO: stoped here
-            }
-            else
-            {
-                Console.WriteLine("You entered wrong Id, try again."); //TODO: change to do while???
             }
 
             HeaderFooterMsg(HeadFootType.footer);
@@ -155,7 +162,7 @@ namespace PhoneBookConsoleApp
 
         private static void AddRecord(string Path)
         {
-            HeaderFooterMsg(HeadFootType.header, "Adding a record to the Phone Book");            
+            HeaderFooterMsg(HeadFootType.header, "Adding a record to the Phone Book");
 
             Console.WriteLine("Enter new record in the correct format and press enter.");
             Console.WriteLine("Format - [FirstName],[LastName],[Phone],[Email]");
@@ -171,28 +178,28 @@ namespace PhoneBookConsoleApp
                     File.AppendAllText(Path, "\n" + newRecord);
                     Console.WriteLine("New record added.");
                 }
-                else 
+                else
                 {
                     Console.WriteLine("You entered empty string, try again.");
                 }
             }
-            
-            HeaderFooterMsg(HeadFootType.footer);            
+
+            HeaderFooterMsg(HeadFootType.footer);
         }
 
         private static void SearchRecord(string Path)
         {
             //TODO: change to 'try/catch'
-            if(File.Exists(Path))
+            if (File.Exists(Path))
             {
-                HeaderFooterMsg(HeadFootType.header, "Search for a Record");                
+                HeaderFooterMsg(HeadFootType.header, "Search for a Record");
 
                 Console.WriteLine("Choose how to search:\n" +
                     "1 - by First Name\n" +
                     "2 - by Last Name");
-                                
-                int searchSelection;
-                bool success = int.TryParse(Console.ReadLine(), out searchSelection);
+
+                //int searchSelection;
+                bool success = int.TryParse(Console.ReadLine(), out int searchSelection);
 
                 string[,] csv_values = LoadCSV(Path);
 
@@ -219,7 +226,7 @@ namespace PhoneBookConsoleApp
                 {
                     Console.WriteLine("Incorrect selection.");
                 }
-                                
+
                 HeaderFooterMsg(HeadFootType.footer);
             }
         }
@@ -238,7 +245,7 @@ namespace PhoneBookConsoleApp
                     {
                         if (csv_values[r, 0] == name)
                         {
-                            searchResultSB.Append("Found:" + " " + csv_values[r, 0] + " " + csv_values[r, 1] + " " +  csv_values[r, 2] + " " + csv_values[r, 3] + "\n");
+                            searchResultSB.Append("Found:" + " " + csv_values[r, 0] + " " + csv_values[r, 1] + " " + csv_values[r, 2] + " " + csv_values[r, 3] + "\n");
                         }
                     }
                     if (searchResultSB.Length > 0)
@@ -263,7 +270,7 @@ namespace PhoneBookConsoleApp
                     else
                         Console.WriteLine("\nNothing found.");
                     break;
-            }            
+            }
         }
 
         private static List<PhoneBookRecord> SearchResultListOfObj(string[,] csv_values, string name, int searchBy)
@@ -278,31 +285,7 @@ namespace PhoneBookConsoleApp
                 case 1:
                     for (int r = 1; r < csv_values.GetLength(0); r++)
                     {
-                        if (csv_values[r,0] == name)
-                        {
-                            foundRecords.Add(new PhoneBookRecord
-                            {
-                                Id = r, 
-                                FirstName = csv_values[r, 0], 
-                                LastName = csv_values[r, 1], 
-                                PhoneNumber = csv_values[r, 2], 
-                                Email = csv_values[r, 3]
-                            });
-                        }
-                    }
-                    if (foundRecords.Count > 1)
-                    {
-                        return foundRecords;
-                    }
-                    else
-                    {
-                        Console.WriteLine("\nNothing found.");                        
-                    }
-                    break;
-                case 2:
-                    for (int r = 1; r < csv_values.GetLength(0); r++)
-                    {
-                        if (csv_values[r,1] == name)
+                        if (csv_values[r, 0] == name)
                         {
                             foundRecords.Add(new PhoneBookRecord
                             {
@@ -323,20 +306,44 @@ namespace PhoneBookConsoleApp
                         Console.WriteLine("\nNothing found.");
                     }
                     break;
+                case 2:
+                    for (int r = 1; r < csv_values.GetLength(0); r++)
+                    {
+                        if (csv_values[r, 1] == name)
+                        {
+                            foundRecords.Add(new PhoneBookRecord
+                            {
+                                Id = r,
+                                FirstName = csv_values[r, 0],
+                                LastName = csv_values[r, 1],
+                                PhoneNumber = csv_values[r, 2],
+                                Email = csv_values[r, 3]
+                            });
+                        }
+                    }
+                    if (foundRecords.Count >= 1)
+                    {
+                        return foundRecords;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nNothing found.");
+                    }
+                    break;
                 default:
-                    Console.WriteLine("\nIncorrect SearchBy argument.");                    
+                    Console.WriteLine("\nIncorrect SearchBy argument.");
                     break;
             }
             return null;
         }
-        
+
         private static void ListPhoneBook(string Path)
         {
             //TODO: change to 'try/catch'
             //TODO: change search method to the Search To List Of Obj method
             if (File.Exists(Path))
             {
-                HeaderFooterMsg(HeadFootType.header, "PhoneBook Listing");                
+                HeaderFooterMsg(HeadFootType.header, "PhoneBook Listing");
 
                 string[,] csv_values = LoadCSV(Path);
 
@@ -361,7 +368,7 @@ namespace PhoneBookConsoleApp
                     {
                         sb.Append("_");
                     }
-                    Console.WriteLine("\n" + sb);                    
+                    Console.WriteLine("\n" + sb);
                 }
 
                 //Display rows
@@ -377,11 +384,11 @@ namespace PhoneBookConsoleApp
                             default:
                                 Console.Write("{0, -15}{1, 0}", csv_values[r, c], "|");
                                 break;
-                        }                        
+                        }
                     }
                     Console.WriteLine();
                 }
-                HeaderFooterMsg(HeadFootType.footer);                
+                HeaderFooterMsg(HeadFootType.footer);
             }
         }
 
@@ -413,7 +420,7 @@ namespace PhoneBookConsoleApp
         }
 
         private static void Help()
-        {            
+        {
             HeaderFooterMsg(HeadFootType.header, "Help");
             Console.WriteLine("List of the available commands:\n\n" +
                 "/help - loads this screen\n" +
@@ -422,8 +429,8 @@ namespace PhoneBookConsoleApp
                 "/search - search for a record in the Phone Book by First or Last name\n" +
                 "/add - add new record to the Phone Book\n" +
                 "/edit - edit record in the Phone Book\n" +
-                "To be continue...");            
-            HeaderFooterMsg(HeadFootType.footer);            
+                "To be continue...");
+            HeaderFooterMsg(HeadFootType.footer);
         }
 
         private static void BasicGreeting()
@@ -434,7 +441,7 @@ namespace PhoneBookConsoleApp
             Console.WriteLine($"Please enter your command or type /help for help.");
         }
 
-        private static void HeaderFooterMsg(HeadFootType type, string addText="")
+        private static void HeaderFooterMsg(HeadFootType type, string addText = "")
         {
             switch (type)
             {
@@ -451,7 +458,7 @@ namespace PhoneBookConsoleApp
                 default:
                     break;
 
-                //Use Enum for argument type. Define argument type as created Enum type.
+                    //Use Enum for argument type. Define argument type as created Enum type.
             }
         }
 
