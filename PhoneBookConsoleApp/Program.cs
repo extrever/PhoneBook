@@ -71,7 +71,7 @@ namespace PhoneBookConsoleApp
 
         private static void EditRecord(string Path)
         {
-            var foundRecords = new List<PhoneBookRecord>();
+            var foundRecords = new List<PhoneBookRecord>();            
 
             HeaderFooterMsg(HeadFootType.header, "Editing a record");
             Console.WriteLine("Choose how to search record to edit:\n" +
@@ -138,6 +138,7 @@ namespace PhoneBookConsoleApp
 
                             string editedRecord = Console.ReadLine();
                             //TODO: stoped here
+                            //Need to change .csv file structure to have an ID for each record
                         }
                         else
                         {
@@ -297,7 +298,7 @@ namespace PhoneBookConsoleApp
                             });
                         }
                     }
-                    if (foundRecords.Count > 1)
+                    if (foundRecords.Count >= 1)
                     {
                         return foundRecords;
                     }
@@ -329,7 +330,7 @@ namespace PhoneBookConsoleApp
                     {
                         Console.WriteLine("\nNothing found.");
                     }
-                    break;
+                    break;                    
                 default:
                     Console.WriteLine("\nIncorrect SearchBy argument.");
                     break;
