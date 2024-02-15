@@ -356,7 +356,10 @@ namespace PhoneBookConsoleApp
                         switch (c)
                         {
                             //TODO: try to get rid off fixed column number
-                            case 3:
+                            case 0:
+                                Console.Write("{0, -5}{1, 0}", csv_values[r, c], "|");
+                                break;
+                            case 4:
                                 Console.Write("{0, -25}{1, 0}", csv_values[r, c], "|");
                                 break;
                             default:
@@ -365,7 +368,7 @@ namespace PhoneBookConsoleApp
                         }
                     }
                     StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < 74; i++)
+                    for (int i = 0; i < 79; i++)
                     {
                         sb.Append("_");
                     }
@@ -379,7 +382,10 @@ namespace PhoneBookConsoleApp
                     {
                         switch (c)
                         {
-                            case 3:
+                            case 0:
+                                Console.Write("{0, -5}{1, 0}", csv_values[r, c], "|");
+                                break;
+                            case 4:
                                 Console.Write("{0, -25}{1, 0}", csv_values[r, c], "|");
                                 break;
                             default:
