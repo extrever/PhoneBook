@@ -119,7 +119,7 @@ namespace PhoneBookConsoleApp
                 {
                     Console.WriteLine("\nThese were found:");
                     //TODO: apply formating like in List method, Console.Write("{0, -25}{1, 0}", csv_values[r, c], "|");
-                    Console.WriteLine("{0, -3}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}", "Id", "|", "FirstName", "|", "LastName", "|", "PhoneNumber", "|", "Email", "|");
+                    Console.WriteLine("{0, -5}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}", "Id", "|", "FirstName", "|", "LastName", "|", "PhoneNumber", "|", "Email", "|");
                     foreach (var recordObj in foundRecords)
                     {
                         Console.WriteLine("{0, -3}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}", recordObj.Id, "|", recordObj.FirstName, "|", recordObj.LastName, "|", recordObj.PhoneNumber, "|", recordObj.Email);
@@ -133,7 +133,7 @@ namespace PhoneBookConsoleApp
                         if (foundRecords.Any(x => x.Id == recordId))
                         {
                             Console.WriteLine("Enter updated record in the correct format and press enter.");
-                            Console.WriteLine("Format - [FirstName],[LastName],[Phone],[Email]");
+                            Console.WriteLine("Format - [ID],[FirstName],[LastName],[Phone],[Email]");
                             Console.WriteLine("If some data is unavailable enter n/a.");
 
                             string editedRecord = Console.ReadLine();
@@ -166,7 +166,7 @@ namespace PhoneBookConsoleApp
             HeaderFooterMsg(HeadFootType.header, "Adding a record to the Phone Book");
 
             Console.WriteLine("Enter new record in the correct format and press enter.");
-            Console.WriteLine("Format - [FirstName],[LastName],[Phone],[Email]");
+            Console.WriteLine("Format - [ID],[FirstName],[LastName],[Phone],[Email]");
             Console.WriteLine("If some data is unavailable enter n//a.");
             string newRecord = Console.ReadLine();
 
@@ -278,6 +278,7 @@ namespace PhoneBookConsoleApp
         {
             //Search the PhoneBook and return a list of oblects representing PhoneBook records
             //SearchBy: 1 - First Name, 2 - Last Name
+            //TODO: update method for the added ID column in the .csv file
 
             List<PhoneBookRecord> foundRecords = new List<PhoneBookRecord>();
 
