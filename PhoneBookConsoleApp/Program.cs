@@ -441,49 +441,45 @@ namespace PhoneBookConsoleApp
 
         static void MainMenu(string dbPath, List<string> Commands)
         {
-            BasicGreeting();
-
-            string cmd = Console.ReadLine();
-
-            if (Commands.Contains(cmd))
+            while (true)
             {
-                switch (cmd)
+                BasicGreeting();
+
+                string cmd = Console.ReadLine();
+
+                if (Commands.Contains(cmd))
                 {
-                    case "/help":
-                        Help();
-                        break;
+                    switch (cmd)
+                    {
+                        case "/help":
+                            Help();
+                            break;
 
-                    case "/exit":
-                        // End the program.
-                        break;
+                        case "/exit":
+                            return; // Exit the loop and end the program.
 
-                    case "/list":
-                        ListPhoneBook(dbPath);
-                        break;
+                        case "/list":
+                            ListPhoneBook(dbPath);
+                            break;
 
-                    case "/search":
-                        SearchRecord(dbPath);
-                        break;
+                        case "/search":
+                            SearchRecord(dbPath);
+                            break;
 
-                    case "/add":
-                        AddRecord(dbPath);
-                        break;
+                        case "/add":
+                            AddRecord(dbPath);
+                            break;
 
-                    case "/edit":
-                        EditRecord(dbPath);
-                        break;
+                        case "/edit":
+                            EditRecord(dbPath);
+                            break;
+                    }
                 }
-
-                if (cmd != "/exit")
+                else
                 {
-                    MainMenu(dbPath, Commands);
+                    Console.WriteLine("Wrong command, try again. Press any key to continue.");
+                    Console.ReadKey();
                 }
-            }
-            else
-            {
-                Console.WriteLine("Wrong command, try again. Press any key to continue.");
-                Console.ReadKey();
-                MainMenu(dbPath, Commands); // Recursively call the function to start over.
             }
         }
     }
