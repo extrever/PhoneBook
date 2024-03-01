@@ -20,44 +20,7 @@ namespace PhoneBookConsoleApp
                 "/edit"
             };
 
-            do
-            {
-                BasicGreeting();
-
-                cmd = Console.ReadLine();
-                if (Commands.Contains(cmd))
-                {
-                    switch (cmd)
-                    {
-                        case "/help":
-                            Help();
-                            break;
-
-                        case "/exit":
-                            break;
-
-                        case "/list":
-                            ListPhoneBook(dbPath);
-                            break;
-
-                        case "/search":
-                            SearchRecord(dbPath);
-                            break;
-                        case "/add":
-                            AddRecord(dbPath);
-                            break;
-                        case "/edit":
-                            EditRecord(dbPath);
-                            break;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Wrong command, try again. Press any key to continue.");
-                    Console.ReadKey();
-                }
-
-            } while (cmd != "/exit");
+            MainMenu(dbPath, Commands);
         }
 
         public class PhoneBookRecord
@@ -474,6 +437,54 @@ namespace PhoneBookConsoleApp
         {
             header,
             footer
+        }
+
+        static void MainMenu(string dbPath, List<string> Commands)
+        {
+            BasicGreeting();
+
+            string cmd = Console.ReadLine();
+
+            if (Commands.Contains(cmd))
+            {
+                switch (cmd)
+                {
+                    case "/help":
+                        Help();
+                        break;
+
+                    case "/exit":
+                        // End the program.
+                        break;
+
+                    case "/list":
+                        ListPhoneBook(dbPath);
+                        break;
+
+                    case "/search":
+                        SearchRecord(dbPath);
+                        break;
+
+                    case "/add":
+                        AddRecord(dbPath);
+                        break;
+
+                    case "/edit":
+                        EditRecord(dbPath);
+                        break;
+                }
+
+                if (cmd != "/exit")
+                {
+                    MainMenu(dbPath, Commands);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Wrong command, try again. Press any key to continue.");
+                Console.ReadKey();
+                MainMenu(dbPath, Commands); // Recursively call the function to start over.
+            }
         }
     }
 }
