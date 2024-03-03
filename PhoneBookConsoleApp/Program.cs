@@ -32,6 +32,19 @@ namespace PhoneBookConsoleApp
             public string? Email { get; set; }
         }
 
+        private static void UpdateCSV(string path, string[,] csvData)
+        {
+            // Load the existing CSV content
+            string[] existingLines = File.ReadAllLines(path);
+
+            // Update the specific line with the modified data
+            int recordIndex = Int32.Parse(csvData[1, 0]); // Assuming the ID is in the first column
+            existingLines[recordIndex] = string.Join(",", csvData.Cast<string>());
+
+            // Save the updated content back to the file
+            File.WriteAllLines(path, existingLines);
+        }
+
         private static void EditRecord(string Path)
         {
             var foundRecords = new List<PhoneBookRecord>();            
@@ -82,10 +95,10 @@ namespace PhoneBookConsoleApp
                 {
                     Console.WriteLine("\nThese were found:");
                     //TODO: apply formating like in List method, Console.Write("{0, -25}{1, 0}", csv_values[r, c], "|");
-                    Console.WriteLine("{0, -5}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}", "Id", "|", "FirstName", "|", "LastName", "|", "PhoneNumber", "|", "Email", "|");
+                    Console.WriteLine("{0, -3}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}{8, -20}{9, 0}", "Id", "|", "FirstName", "|", "LastName", "|", "PhoneNumber", "|", "Email", "|");
                     foreach (var recordObj in foundRecords)
                     {
-                        Console.WriteLine("{0, -3}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}", recordObj.Id, "|", recordObj.FirstName, "|", recordObj.LastName, "|", recordObj.PhoneNumber, "|", recordObj.Email);
+                        Console.WriteLine("{0, -3}{1, 0}{2, -15}{3, 0}{4, -25}{5, 0}{6, -15}{7, 0}{8, -20}{9, 0}", recordObj.Id, "|", recordObj.FirstName, "|", recordObj.LastName, "|", recordObj.PhoneNumber, "|", recordObj.Email, "|");
                     }
 
                     Console.WriteLine("Enter Id of the record you want to edit: ");
@@ -100,8 +113,25 @@ namespace PhoneBookConsoleApp
                             Console.WriteLine("If some data is unavailable enter n/a.");
 
                             string editedRecord = Console.ReadLine();
-                            //TODO: stoped here
-                            //Need to change .csv file structure to have an ID for each record
+
+                            // Split the edited record into fields
+                            string[] editedFields = editedRecord.Split(',');
+
+                            // Find the index of the record in the CSV file
+                            int recordIndex = foundRecords.FindIndex(x => x.Id == recordId);
+
+                            // Update the record in the CSV file
+                            string[,] csv_values = LoadCSV(Path);
+                            csv_values[recordIndex + 1, 1] = editedFields[1]; // Updating FirstName
+                            csv_values[recordIndex + 1, 2] = editedFields[2]; // Updating LastName
+                            csv_values[recordIndex + 1, 3] = editedFields[3]; // Updating PhoneNumber
+                            csv_values[recordIndex + 1, 4] = editedFields[4]; // Updating Email
+
+                            // Save the updated CSV back to the file
+                            UpdateCSV(Path, csv_values); //TODO: Pass cav_values[ONLY_UPDATED_LINE] not whole array
+                            //TODO: STOPED HERE - change UpdateCSV method or part of the EditRecord method above because it messing with the line index...
+
+                            Console.WriteLine("Record updated successfully.");
                         }
                         else
                         {
@@ -247,18 +277,18 @@ namespace PhoneBookConsoleApp
 
             switch (searchBy)
             {
-                case 1:
+                case 1: //Search by First Name
                     for (int r = 1; r < csv_values.GetLength(0); r++)
                     {
-                        if (csv_values[r, 0] == name)
+                        if (csv_values[r, 1] == name)
                         {
                             foundRecords.Add(new PhoneBookRecord
                             {
-                                Id = r,
-                                FirstName = csv_values[r, 0],
-                                LastName = csv_values[r, 1],
-                                PhoneNumber = csv_values[r, 2],
-                                Email = csv_values[r, 3]
+                                Id = Convert.ToInt32(csv_values[r, 0]),
+                                FirstName = csv_values[r, 1],
+                                LastName = csv_values[r, 2],
+                                PhoneNumber = csv_values[r, 3],
+                                Email = csv_values[r, 4]
                             });
                         }
                     }
@@ -271,18 +301,18 @@ namespace PhoneBookConsoleApp
                         Console.WriteLine("\nNothing found.");
                     }
                     break;
-                case 2:
+                case 2: //Search by Last Name
                     for (int r = 1; r < csv_values.GetLength(0); r++)
                     {
-                        if (csv_values[r, 1] == name)
+                        if (csv_values[r, 2] == name)
                         {
                             foundRecords.Add(new PhoneBookRecord
                             {
-                                Id = r,
-                                FirstName = csv_values[r, 0],
-                                LastName = csv_values[r, 1],
-                                PhoneNumber = csv_values[r, 2],
-                                Email = csv_values[r, 3]
+                                Id = Convert.ToInt32(csv_values[r, 0]),
+                                FirstName = csv_values[r, 1],
+                                LastName = csv_values[r, 2],
+                                PhoneNumber = csv_values[r, 3],
+                                Email = csv_values[r, 4]
                             });
                         }
                     }
