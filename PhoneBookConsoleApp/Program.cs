@@ -32,13 +32,13 @@ namespace PhoneBookConsoleApp
             public string? Email { get; set; }
         }
 
-        private static void UpdateCSV(string path, string[,] csvData)
+        private static void UpdateCSV(string path, string[] csvData)
         {
             // Load the existing CSV content
             string[] existingLines = File.ReadAllLines(path);
 
             // Update the specific line with the modified data
-            int recordIndex = Int32.Parse(csvData[1, 0]); // Assuming the ID is in the first column
+            int recordIndex = Int32.Parse(csvData[0]); // Assuming the ID is in the first column
             existingLines[recordIndex] = string.Join(",", csvData.Cast<string>());
 
             // Save the updated content back to the file
@@ -121,15 +121,17 @@ namespace PhoneBookConsoleApp
                             int recordIndex = foundRecords.FindIndex(x => x.Id == recordId);
 
                             // Update the record in the CSV file
-                            string[,] csv_values = LoadCSV(Path);
-                            csv_values[recordIndex + 1, 1] = editedFields[1]; // Updating FirstName
-                            csv_values[recordIndex + 1, 2] = editedFields[2]; // Updating LastName
-                            csv_values[recordIndex + 1, 3] = editedFields[3]; // Updating PhoneNumber
-                            csv_values[recordIndex + 1, 4] = editedFields[4]; // Updating Email
+                            //TODO: DONT NEED THIS, TO BE DELETED
+                            //string[,] csv_values = LoadCSV(Path);
+                            //csv_values[recordIndex + 1, 1] = editedFields[1]; // Updating FirstName
+                            //csv_values[recordIndex + 1, 2] = editedFields[2]; // Updating LastName
+                            //csv_values[recordIndex + 1, 3] = editedFields[3]; // Updating PhoneNumber
+                            //csv_values[recordIndex + 1, 4] = editedFields[4]; // Updating Email
+                            //TODO: DONT NEED THIS, TO BE DELETED
 
-                            // Save the updated CSV back to the file
-                            UpdateCSV(Path, csv_values); //TODO: Pass cav_values[ONLY_UPDATED_LINE] not whole array
-                            //TODO: STOPED HERE - change UpdateCSV method or part of the EditRecord method above because it messing with the line index...
+                            // Save the updated CSV back to the file                            
+                            UpdateCSV(Path, editedFields);
+                            //TODO: STOPED HERE
 
                             Console.WriteLine("Record updated successfully.");
                         }
